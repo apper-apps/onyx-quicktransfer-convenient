@@ -29,8 +29,11 @@ export const uploadFile = async (file, shareData = {}) => {
     const slug = generateSlug(12)
     
 // Prepare file data for database using exact field names from schema
+// Ensure shareData has default values to prevent undefined errors
+    const safeShareData = shareData || {};
+    
     const fileData = {
-      Name: shareData.fileName || file.name, // Use custom name if provided, otherwise original filename
+      Name: safeShareData.fileName || file.name, // Use custom name if provided, otherwise original filename
       file_name: file.name,
       file_size: file.size,
       file_type: file.type,
@@ -38,8 +41,8 @@ export const uploadFile = async (file, shareData = {}) => {
       upload_timestamp: new Date().toISOString(),
       expiration_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       download_count: 0,
-      recipient_email: shareData.recipientEmail || null,
-      message: shareData.message || null,
+      recipient_email: safeShareData.recipientEmail || null,
+      message: safeShareData.message || null,
       file_path: `/uploads/${slug}_${file.name}`
     }
     

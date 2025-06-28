@@ -4,40 +4,67 @@ import { toast } from "sonner";
 import ProgressBar from "@/components/atoms/ProgressBar";
 import FilePreview from "@/components/molecules/FilePreview";
 import FileDropzone from "@/components/molecules/FileDropzone";
+import FileNameModal from "@/components/molecules/FileNameModal";
 import { uploadFile } from "@/services/api/fileService";
-
 const UploadSection = ({ onUploadComplete }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
+const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [customFileName, setCustomFileName] = useState('');
+const handleFileSelect = (file) => {
+    if (!file) {
+      toast.error('No file selected');
+      return;
+    }
+    
+    setSelectedFile(file);
+    setCustomFileName(file.name);
+    setShowNameModal(true);
+  };
 
-  const handleFileSelect = async (file) => {
-    setSelectedFile(file)
-    setUploading(true)
-setUploadProgress(0);
+  const handleNameSubmit = async (fileName) => {
+    if (!selectedFile) {
+      toast.error('No file selected');
+      setShowNameModal(false);
+      return;
+    }
+
+    setShowNameModal(false);
+    setUploading(true);
+    setUploadProgress(0);
 
     try {
       // Simulate upload progress
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
-clearInterval(progressInterval);
+            clearInterval(progressInterval);
             return 90;
           }
           return prev + Math.random() * 15;
         });
       }, 200);
-const result = await uploadFile(file);
+
+      // Upload with custom file name and share data
+      const shareData = {
+        fileName: fileName || selectedFile.name,
+        recipientEmail: null,
+        message: null
+      };
+
+      const result = await uploadFile(selectedFile, shareData);
       
       clearInterval(progressInterval);
       setUploadProgress(100);
-setTimeout(() => {
+      
+      setTimeout(() => {
         onUploadComplete(result);
         toast.success('File uploaded successfully!');
       }, 500);
       
     } catch (error) {
-console.error('Upload error:', error);
+      console.error('Upload error:', error);
       setUploadProgress(0);
       setUploading(false);
       setSelectedFile(null);
@@ -49,6 +76,8 @@ const handleRemoveFile = () => {
     setSelectedFile(null);
     setUploadProgress(0);
     setUploading(false);
+    setShowNameModal(false);
+    setCustomFileName('');
   };
   if (uploading && selectedFile) {
     return (
@@ -108,8 +137,18 @@ const handleRemoveFile = () => {
         </p>
       </div>
 
-      {/* File Name Modal */}
-</motion.div>
+{/* File Name Modal */}
+      <FileNameModal
+        isOpen={showNameModal}
+        onClose={() => {
+          setShowNameModal(false);
+          setSelectedFile(null);
+          setCustomFileName('');
+        }}
+        onConfirm={handleNameSubmit}
+        defaultName={customFileName}
+      />
+    </motion.div>
   );
 };
 
