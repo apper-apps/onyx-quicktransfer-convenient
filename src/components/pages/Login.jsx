@@ -13,7 +13,7 @@ useEffect(() => {
 
     const initializeAuth = () => {
       try {
-        // Ensure SDK is available
+        // Ensure SDK is available and fully loaded
         if (!window.ApperSDK || !window.ApperSDK.ApperUI) {
           console.warn('ApperSDK not yet loaded, retrying...');
           if (retryCount < maxRetries) {
@@ -25,7 +25,7 @@ useEffect(() => {
           return;
         }
 
-        // Ensure DOM element exists
+        // Ensure DOM element exists and is properly mounted
         const authElement = document.querySelector("#authentication");
         if (!authElement) {
           console.warn('Authentication element not found, retrying...');
@@ -38,16 +38,60 @@ useEffect(() => {
           return;
         }
 
+        // Verify element is actually in the DOM and not detached
+        if (!document.body.contains(authElement)) {
+          console.warn('Authentication element not attached to DOM, retrying...');
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(initializeAuth, retryDelay * retryCount);
+          } else {
+            console.error('Authentication element not properly attached after maximum retries');
+          }
+          return;
+        }
+
         // Proceed with authentication initialization
         const { ApperUI } = window.ApperSDK;
         
-        // Additional safety check
+        // Additional safety checks for ApperUI methods
         if (typeof ApperUI.showLogin !== 'function') {
           console.error('ApperUI.showLogin is not a function');
           return;
         }
 
-        ApperUI.showLogin("#authentication");
+        // Additional check to ensure ApperUI is fully initialized
+        if (!ApperUI.setup || typeof ApperUI.setup !== 'function') {
+          console.warn('ApperUI not fully initialized, retrying...');
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(initializeAuth, retryDelay * retryCount);
+          } else {
+            console.error('ApperUI failed to initialize properly after maximum retries');
+          }
+          return;
+        }
+
+        // Clear any existing content to prevent conflicts
+        authElement.innerHTML = '';
+        
+        // Add a small delay to ensure DOM is ready for ApperUI operations
+        setTimeout(() => {
+          try {
+            ApperUI.showLogin("#authentication");
+          } catch (innerError) {
+            console.error('Error during ApperUI.showLogin execution:', innerError);
+            
+            // If this is a DOM-related error, try to retry
+            if (innerError.message && (innerError.message.includes('null') || innerError.message.includes('undefined'))) {
+              console.warn('DOM-related error detected, retrying...');
+              if (retryCount < maxRetries) {
+                retryCount++;
+                setTimeout(initializeAuth, retryDelay * retryCount);
+              }
+            }
+          }
+        }, 10);
+
       } catch (error) {
         console.error('Error initializing authentication:', error);
         
@@ -60,15 +104,15 @@ useEffect(() => {
     };
 
     if (isInitialized) {
-      // Small delay to ensure DOM is fully ready
-      setTimeout(initializeAuth, 50);
+      // Increased delay to ensure DOM is fully ready and ApperSDK is stable
+      setTimeout(initializeAuth, 100);
     }
 
-    // Cleanup function
+    // Enhanced cleanup function
     return () => {
       try {
         const authElement = document.querySelector("#authentication");
-        if (authElement) {
+        if (authElement && document.body.contains(authElement)) {
           authElement.innerHTML = '';
         }
       } catch (error) {
