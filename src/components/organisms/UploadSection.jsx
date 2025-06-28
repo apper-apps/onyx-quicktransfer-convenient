@@ -23,13 +23,34 @@ const handleFileSelect = (file) => {
     setShowNameModal(true);
   };
 
-  const handleNameSubmit = async (fileName) => {
+const handleNameSubmit = async (fileName) => {
+    // Comprehensive validation of selected file
     if (!selectedFile) {
       toast.error('No file selected');
       setShowNameModal(false);
       return;
     }
 
+    // Validate file object properties
+    if (!selectedFile.name) {
+      toast.error('Selected file is missing name property');
+      setShowNameModal(false);
+      setSelectedFile(null);
+      return;
+    }
+
+    if (selectedFile.size === undefined || selectedFile.size === null) {
+      toast.error('Selected file is missing size property');
+      setShowNameModal(false);
+      setSelectedFile(null);
+      return;
+    }
+
+    // Validate fileName parameter
+    if (fileName !== undefined && fileName !== null && typeof fileName !== 'string') {
+      toast.error('Invalid file name provided');
+      return;
+    }
     setShowNameModal(false);
     setUploading(true);
     setUploadProgress(0);

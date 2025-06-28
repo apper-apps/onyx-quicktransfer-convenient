@@ -8,13 +8,26 @@ const FileNameModal = ({ isOpen, onClose, onConfirm, defaultName = '' }) => {
   const [fileName, setFileName] = useState(defaultName);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!fileName.trim()) return;
+    
+    // Validate fileName before submission
+    if (!fileName || !fileName.trim()) {
+      return;
+    }
+    
+    // Validate onConfirm callback
+    if (!onConfirm || typeof onConfirm !== 'function') {
+      console.error('onConfirm callback is not provided or not a function');
+      return;
+    }
     
     setIsSubmitting(true);
     try {
       await onConfirm(fileName.trim());
+    } catch (error) {
+      console.error('Error in FileNameModal submission:', error);
+      // Don't re-throw here as the parent component should handle the error
     } finally {
       setIsSubmitting(false);
     }

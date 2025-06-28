@@ -19,6 +19,28 @@ const getApperClient = () => {
 
 export const uploadFile = async (file, shareData = {}) => {
   try {
+    // Comprehensive input validation
+    if (!file) {
+      throw new Error('File is required but was not provided')
+    }
+    
+    if (typeof file !== 'object') {
+      throw new Error('Invalid file object provided')
+    }
+    
+    // Validate required file properties
+    if (!file.name) {
+      throw new Error('File name is missing or undefined')
+    }
+    
+    if (file.size === undefined || file.size === null) {
+      throw new Error('File size is missing or undefined')
+    }
+    
+    if (!file.type) {
+      throw new Error('File type is missing or undefined')
+    }
+    
     // Validate file size (100MB limit)
     const MAX_SIZE = 100 * 1024 * 1024
     if (file.size > MAX_SIZE) {
@@ -28,15 +50,20 @@ export const uploadFile = async (file, shareData = {}) => {
     // Generate unique slug
     const slug = generateSlug(12)
     
-// Prepare file data for database using exact field names from schema
-// Ensure shareData has default values to prevent undefined errors
+    // Prepare file data for database using exact field names from schema
+    // Ensure shareData has default values to prevent undefined errors
     const safeShareData = shareData || {};
     
+    // Validate shareData if provided
+    if (shareData && typeof shareData !== 'object') {
+      throw new Error('Invalid shareData object provided')
+    }
+    
     const fileData = {
-      Name: safeShareData.fileName || file.name, // Use custom name if provided, otherwise original filename
+      Name: (safeShareData.fileName && safeShareData.fileName.trim()) || file.name, // Use custom name if provided, otherwise original filename
       file_name: file.name,
       file_size: file.size,
-      file_type: file.type,
+      file_type: file.type || 'application/octet-stream',
       slug: slug,
       upload_timestamp: new Date().toISOString(),
       expiration_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
