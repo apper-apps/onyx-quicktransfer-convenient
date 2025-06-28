@@ -6,12 +6,75 @@ import { AuthContext } from '../../App';
 function Login() {
   const { isInitialized } = useContext(AuthContext);
   
-  useEffect(() => {
+useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 5;
+    const retryDelay = 100;
+
+    const initializeAuth = () => {
+      try {
+        // Ensure SDK is available
+        if (!window.ApperSDK || !window.ApperSDK.ApperUI) {
+          console.warn('ApperSDK not yet loaded, retrying...');
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(initializeAuth, retryDelay * retryCount);
+          } else {
+            console.error('ApperSDK failed to load after maximum retries');
+          }
+          return;
+        }
+
+        // Ensure DOM element exists
+        const authElement = document.querySelector("#authentication");
+        if (!authElement) {
+          console.warn('Authentication element not found, retrying...');
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(initializeAuth, retryDelay * retryCount);
+          } else {
+            console.error('Authentication element not found after maximum retries');
+          }
+          return;
+        }
+
+        // Proceed with authentication initialization
+        const { ApperUI } = window.ApperSDK;
+        
+        // Additional safety check
+        if (typeof ApperUI.showLogin !== 'function') {
+          console.error('ApperUI.showLogin is not a function');
+          return;
+        }
+
+        ApperUI.showLogin("#authentication");
+      } catch (error) {
+        console.error('Error initializing authentication:', error);
+        
+        // Retry on error if we haven't exceeded max retries
+        if (retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(initializeAuth, retryDelay * retryCount);
+        }
+      }
+    };
+
     if (isInitialized) {
-      // Show login UI in this component
-      const { ApperUI } = window.ApperSDK;
-      ApperUI.showLogin("#authentication");
+      // Small delay to ensure DOM is fully ready
+      setTimeout(initializeAuth, 50);
     }
+
+    // Cleanup function
+    return () => {
+      try {
+        const authElement = document.querySelector("#authentication");
+        if (authElement) {
+          authElement.innerHTML = '';
+        }
+      } catch (error) {
+        console.warn('Error during authentication cleanup:', error);
+      }
+    };
   }, [isInitialized]);
   
   return (
