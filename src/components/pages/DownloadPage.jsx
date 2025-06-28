@@ -20,13 +20,14 @@ const DownloadPage = () => {
     loadFileData()
   }, [slug])
 
-  const loadFileData = async () => {
+const loadFileData = async () => {
     try {
       setLoading(true)
       setError(null)
       const data = await getFileBySlug(slug)
       setFileData(data)
     } catch (err) {
+      console.error('Load file error:', err)
       setError(err.message || 'File not found or expired')
     } finally {
       setLoading(false)
@@ -38,9 +39,11 @@ const DownloadPage = () => {
 
     setDownloading(true)
     try {
-      await downloadFile(fileData.Id)
+      const result = await downloadFile(fileData.Id)
+      setFileData(prev => ({ ...prev, downloadCount: result.downloadCount }))
       toast.success('Download started successfully!')
     } catch (err) {
+      console.error('Download error:', err)
       toast.error(err.message || 'Download failed')
     } finally {
       setDownloading(false)

@@ -16,7 +16,7 @@ const UploadSection = ({ onUploadComplete }) => {
     setUploading(true)
     setUploadProgress(0)
 
-    try {
+try {
       // Simulate upload progress
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
@@ -39,6 +39,7 @@ const UploadSection = ({ onUploadComplete }) => {
       }, 500)
       
     } catch (error) {
+      console.error('Upload error:', error)
       setUploadProgress(0)
       setUploading(false)
       setSelectedFile(null)

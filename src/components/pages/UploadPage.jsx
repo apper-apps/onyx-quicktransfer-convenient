@@ -1,21 +1,27 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { motion } from 'framer-motion'
+import { useSelector } from 'react-redux'
 import UploadSection from '@/components/organisms/UploadSection'
 import ShareForm from '@/components/molecules/ShareForm'
 import ShareSuccess from '@/components/molecules/ShareSuccess'
+import Button from '@/components/atoms/Button'
+import ApperIcon from '@/components/ApperIcon'
 import { generateShareLink } from '@/services/api/fileService'
+import { AuthContext } from '../../App'
 import { toast } from 'sonner'
 
 const UploadPage = () => {
   const [uploadedFile, setUploadedFile] = useState(null)
   const [shareUrl, setShareUrl] = useState('')
   const [generating, setGenerating] = useState(false)
+  const { logout } = useContext(AuthContext)
+  const { user } = useSelector((state) => state.user)
 
   const handleUploadComplete = (fileData) => {
     setUploadedFile(fileData)
   }
 
-  const handleGenerateLink = async (shareData) => {
+const handleGenerateLink = async (shareData) => {
     if (!uploadedFile) return
 
     setGenerating(true)
@@ -24,9 +30,20 @@ const UploadPage = () => {
       setShareUrl(result.shareUrl)
       toast.success('Share link generated successfully!')
     } catch (error) {
+      console.error('Generate link error:', error)
       toast.error(error.message || 'Failed to generate share link')
     } finally {
       setGenerating(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success('Logged out successfully!')
+    } catch (error) {
+      console.error('Logout error:', error)
+      toast.error('Failed to logout')
     }
   }
 
@@ -39,13 +56,30 @@ const UploadPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+<header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">Q</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">Q</span>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900">QuickTransfer</h1>
             </div>
-            <h1 className="text-xl font-bold text-gray-900">QuickTransfer</h1>
+            <div className="flex items-center space-x-4">
+              {user && (
+                <span className="text-sm text-gray-600">
+                  Welcome, {user.firstName || user.emailAddress}
+                </span>
+              )}
+              <Button
+                variant="secondary"
+                size="sm"
+                icon="LogOut"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </header>
