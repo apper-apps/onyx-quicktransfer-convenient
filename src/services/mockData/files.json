@@ -1,0 +1,41 @@
+[
+  {
+    "Id": 1,
+    "fileName": "sample-document.pdf",
+    "fileSize": 2048000,
+    "fileType": "application/pdf",
+    "slug": "abc123def456",
+    "uploadTimestamp": "2024-01-15T10:30:00.000Z",
+    "expirationDate": "2024-01-22T10:30:00.000Z",
+    "downloadCount": 3,
+    "recipientEmail": "user@example.com",
+    "message": "Here's the document you requested",
+    "filePath": "/uploads/abc123def456_sample-document.pdf"
+  },
+  {
+    "Id": 2,
+    "fileName": "presentation-slides.pptx",
+    "fileSize": 15360000,
+    "fileType": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "slug": "xyz789ghi012",
+    "uploadTimestamp": "2024-01-16T14:45:00.000Z",
+    "expirationDate": "2024-01-23T14:45:00.000Z",
+    "downloadCount": 1,
+    "recipientEmail": null,
+    "message": null,
+    "filePath": "/uploads/xyz789ghi012_presentation-slides.pptx"
+  },
+  {
+    "Id": 3,
+    "fileName": "vacation-photos.zip",
+    "fileSize": 52428800,
+    "fileType": "application/zip",
+    "slug": "mno345pqr678",
+    "uploadTimestamp": "2024-01-17T09:15:00.000Z",
+    "expirationDate": "2024-01-24T09:15:00.000Z",
+    "downloadCount": 7,
+    "recipientEmail": "family@example.com",
+    "message": "Our vacation photos from last week!",
+    "filePath": "/uploads/mno345pqr678_vacation-photos.zip"
+  }
+]

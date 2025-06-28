@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-emerald-700 hover:bg-emerald-800 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-gray-700 font-medium px-6 py-3 rounded-lg border border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors duration-200;
+  }
+  
+  .dropzone {
+    @apply border-2 border-dashed border-gray-300 rounded-xl transition-all duration-300 hover:border-emerald-400 hover:bg-emerald-50/30;
+  }
+  
+  .dropzone-active {
+    @apply border-emerald-500 bg-emerald-50 shadow-lg ring-4 ring-emerald-100;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.3s ease-out;
+}
+
+/* File type icons */
+.file-icon {
+  @apply w-12 h-12 rounded-lg flex items-center justify-center text-white font-semibold text-lg;
+}
+
+.file-icon-pdf {
+  @apply bg-red-500;
+}
+
+.file-icon-doc {
+  @apply bg-blue-500;
+}
+
+.file-icon-img {
+  @apply bg-purple-500;
+}
+
+.file-icon-zip {
+  @apply bg-yellow-500;
+}
+
+.file-icon-default {
+  @apply bg-gray-500;
+}
+
+/* Drag and drop feedback */
+.drag-over {
+  @apply ring-4 ring-emerald-200 border-emerald-500 bg-emerald-50;
+}
+
+/* Loading animation */
+.loading-dots {
+  animation: loading 1.4s infinite ease-in-out both;
+}
+
+.loading-dots:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loading {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Toast customization */
+.sonner-toast {
+  @apply rounded-lg shadow-lg;
+}
+
+.sonner-toast[data-type="success"] {
+  @apply bg-emerald-50 border-emerald-200 text-emerald-800;
+}
+
+.sonner-toast[data-type="error"] {
+  @apply bg-red-50 border-red-200 text-red-800;
+}
+
+.sonner-toast[data-type="info"] {
+  @apply bg-blue-50 border-blue-200 text-blue-800;
+}
