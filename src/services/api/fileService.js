@@ -28,9 +28,9 @@ export const uploadFile = async (file, shareData = {}) => {
     // Generate unique slug
     const slug = generateSlug(12)
     
-    // Prepare file data for database using exact field names from schema
+// Prepare file data for database using exact field names from schema
     const fileData = {
-      Name: file.name, // Use Name field from schema
+      Name: shareData.fileName || file.name, // Use custom name if provided, otherwise original filename
       file_name: file.name,
       file_size: file.size,
       file_type: file.type,

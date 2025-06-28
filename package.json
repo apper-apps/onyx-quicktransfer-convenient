@@ -9,9 +9,12 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {
+"dependencies": {
     "@reduxjs/toolkit": "2.7.0",
+    "@radix-ui/react-dialog": "^1.1.2",
     "apexcharts": "4.7.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "date-fns": "4.1.0",
     "framer-motion": "10.16.4",
     "lucide-react": "0.299.0",
@@ -21,7 +24,8 @@
     "react-redux": "9.2.0",
     "react-router-dom": "6.15.0",
     "react-toastify": "11.0.5",
-    "sonner": "1.7.1"
+    "sonner": "1.7.1",
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
